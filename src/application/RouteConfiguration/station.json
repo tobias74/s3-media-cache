@@ -1,0 +1,18 @@
+[
+   {  
+      "route":"website/station/upload-form",
+      "controller":"WebStationController",
+      "action":"uploadFormAction",
+      "methods":[  
+         "GET"
+      ]
+   },
+   {  
+      "route":"website/group/:groupId/station/upload-form/:stationId",
+      "controller":"WebStationController",
+      "action":"uploadFormAction",
+      "methods":[  
+         "GET"
+      ]
+   }
+]

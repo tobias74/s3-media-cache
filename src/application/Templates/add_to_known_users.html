@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h2 class="header center orange-text">Add User</h2>
+      <div class="row center">
+        <h5 class="header col s12 light">Add User to Known Users</h5>
+        This: {{knownUserId}}
+      </div>
+      <br><br>
+
+    </div>
+  </div>
+  
+      <form  action="/website/add-user-to-known-users" method="post" enctype="multipart/form-data" style="margin-bottom:30px;">
+        <input type="hidden" name="knownUserId" value="{{knownUserId}}"/>
+
+        <div class="row">
+          <div class="input-field col s12">
+              Add this user to your List of known Users
+          </div>      
+        </div>
+
+
+      
+
+
+        <div class="row">
+            <div class="input-field col s12">
+              <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                  <i class="material-icons right">send</i>
+              </button>
+            </div>
+        </div>
+        
+        
+      </form>
+  
+
+
+
+{% endblock %}

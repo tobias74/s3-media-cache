@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+
+{% block title %} My Groups {% endblock %}
+
+
+
+
+{% block content %}
+
+<style>
+.profile-image {
+  max-width:50px;
+}
+
+.task-cat {
+  padding: 2px 4px;
+  color: #fff;
+  font-weight: 300;
+  font-size: 0.8rem;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  background-clip: padding-box;
+}  
+</style>
+
+<div class="container">
+  
+  <div class="row">
+    <form class="col s12" method="POST" action="/website/edit-group/{{groupId}}">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="group_title" name="group_title" value="{{group.title}}" type="text" class="validate">
+          <label for="group_title">Name of the group</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+            <textarea id="group_description" class="materialize-textarea" name="group_description">{{group.description}}</textarea>
+            <label for="group_description">Description</label>
+        </div>
+      </div>
+      
+      <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+        <i class="material-icons right">send</i>
+      </button>      
+    </form>
+  </div>
+  
+
+
+  <ul class="">
+    
+  {% for memberId,roles in group.members %}
+    <li>
+      <div class="">
+        <div class="row" style="margin-bottom:0px;width:100%;">
+          <div class="col s2">
+            <img src="{{users[memberId].profileImage}}" alt="" class="circle profile-image">
+          </div>
+          <div class="col s5">
+            <span class="title">{{users[memberId].displayName}}</span> with role {{roles[0]}}
+          </div>
+          <div class="col s5">
+            <form data-member-id="{{memberId}}" data-group-id="{{groupId}}">
+              <label>
+                <input 
+                  {{ is_checked(roles[0],'admin') }} 
+                  name="role" class="with-gap" type="radio" value="admin" onclick="sendRolesForUser(this)"/>
+                <span>Admin</span>
+              </label>          
+    
+              <label>
+                <input 
+                  {{ is_checked(roles[0],'editor') }} 
+                  name="role" class="with-gap" type="radio" value="editor" onclick="sendRolesForUser(this)"/>
+                <span>Editor</span>
+              </label>          
+    
+              <label>
+                <input 
+                  {{ is_checked(roles[0],'guest') }} 
+                  name="role" class="with-gap" type="radio" value="guest" onclick="sendRolesForUser(this)"/>
+                <span>Guest</span>
+              </label>          
+              
+              <button class="btn waves-effect waves-light" type="button" onclick="removeUserFromGroup(this)">Remove
+                <i class="material-icons right">delete</i>
+              </button>      
+    
+            </form>
+            
+          </div>
+          
+        </div>
+
+      </div>
+      
+    </li>
+  {% endfor %}        
+  </ul>
+
+
+
+
+  <ul class="">
+    
+  {% for userId in nonMembers %}
+    <li>
+      <div class="">
+        <div class="row" style="margin-bottom:0px;width:100%;">
+          <div class="col s2">
+            <img src="{{users[userId].profileImage}}" alt="" class="circle profile-image">
+          </div>
+          <div class="col s5">
+            <span class="title">{{users[userId].displayName}}</span>
+          </div>
+          <div class="col s5">
+            <form data-user-id="{{userId}}" data-group-id="{{groupId}}">
+              <button class="btn waves-effect waves-light" type="button" onclick="addUserToGroup(this)">Add
+                <i class="material-icons right">add</i>
+              </button>      
+            </form>
+          </div>
+        </div>
+      </div>
+    </li>
+  {% endfor %}        
+  </ul>
+
+
+</div>
+
+<script>
+
+var sendRolesForUser = function(button){
+  var form = $(button).closest('form');
+  var memberId = form.data('memberId');
+  var groupId = form.data('groupId');
+  var role = $(form).find('input[name=role]:checked').val();
+  
+  $.post("/website/set-roles", {
+    memberId: memberId,
+    role: role,
+    groupId: groupId
+  }, function(data) {
+    console.log('back here?');
+  });
+  
+};
+
+var addUserToGroup = function(button){
+  var form = $(button).closest('form');
+  var userId = form.data('userId');
+  var groupId = form.data('groupId');
+  var role = $(form).find('input[name=role]:checked').val();
+  
+  $.post("/website/set-roles", {
+    memberId: userId,
+    role: 'guest',
+    groupId: groupId
+  }, function(data) {
+    console.log('back here?');
+  });
+  
+};
+
+var removeUserFromGroup = function(button){
+  var form = $(button).closest('form');
+  var memberId = form.data('memberId');
+  var groupId = form.data('groupId');
+  var role = $(form).find('input[name=role]:checked').val();
+  
+  $.post("/website/remove-group-member", {
+    memberId: memberId,
+    groupId: groupId
+  }, function(data) {
+    console.log('back here?');
+  });
+  
+};
+
+
+
+
+$(document).ready(function(){
+  var elem = document.querySelector('.collapsible.expandable');
+  var instance = M.Collapsible.init(elem, {
+    accordion: false
+  });
+});
+              
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,570 @@
+{% extends "layout.html" %}
+
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ parent() }}
+
+
+    <style type="text/css">
+      @media (max-width: 600px) {
+        .image-grid {
+          display:grid; 
+          grid-template-columns: 1fr;
+          grid-column-gap:25px;
+          grid-row-gap:25px;        
+        }
+      }    
+
+      @media (max-width: 992px) {
+        .image-grid {
+          display:grid; 
+          grid-template-columns: 1fr;
+          grid-column-gap:25px;
+          grid-row-gap:25px;        
+        }
+      }    
+      
+      @media (min-width: 993px) {
+        .image-grid {
+          display:grid; 
+          grid-template-columns: 1fr 1fr;
+          grid-column-gap:25px;
+          grid-row-gap:25px;        
+        }
+      }    
+      
+      @media (min-width: 1200px) {
+        .image-grid {
+          display:grid; 
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-column-gap:25px;
+          grid-row-gap:25px;        
+        }
+      }    
+      
+    </style>
+
+    <script>
+    
+    var setMapVisible = function(value){
+      console.log(value);
+      if(value){
+        $('#useMapInput').val('yes');
+        $('#map_slider').slideDown('fast');
+        $('#distance_to_pin_option').removeAttr('disabled');
+        $('select').formSelect();        
+        setTimeout(function(){
+          initializeSearchMap(12, 13);
+        },0)          
+      }
+      else {
+        $('#useMapInput').val('no');
+        $('#map_slider').slideUp('fast');
+        $('#distance_to_pin_option').attr('disabled','disabled');
+        $('select').formSelect(); 
+        submitSearchForm();
+      }
+    }
+    
+    var updateFormAndMapToLocation = function(googleMap, searchMarker, latlng){
+      	searchMarker.setPosition(latlng);
+    		googleMap.setCenter(latlng);
+        $('#latitude').val(latlng.lat());
+        $('#longitude').val(latlng.lng());
+    };
+    
+    var addYourLocationButtonSimple = function(googleMap, searchMarker) 
+    {
+    	var controlDiv = document.createElement('div');
+    	
+    	var firstChild = document.createElement('button');
+    	firstChild.style.backgroundColor = '#fff';
+    	firstChild.style.border = 'none';
+    	firstChild.style.outline = 'none';
+    	firstChild.style.width = '28px';
+    	firstChild.style.height = '28px';
+    	firstChild.style.borderRadius = '2px';
+    	firstChild.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
+    	firstChild.style.cursor = 'pointer';
+    	firstChild.style.marginRight = '10px';
+    	firstChild.style.padding = '0px';
+    	firstChild.title = 'Your Location';
+    	controlDiv.appendChild(firstChild);
+    	
+    	var secondChild = document.createElement('div');
+    	secondChild.style.margin = '5px';
+    	secondChild.style.width = '18px';
+    	secondChild.style.height = '18px';
+    	secondChild.style.backgroundImage = 'url(//maps.gstatic.com/tactile/mylocation/mylocation-sprite-1x.png)';
+    	secondChild.style.backgroundSize = '180px 18px';
+    	secondChild.style.backgroundPosition = '0px 0px';
+    	secondChild.style.backgroundRepeat = 'no-repeat';
+    	firstChild.appendChild(secondChild);
+    	
+    	google.maps.event.addListener(googleMap, 'dragend', function() {
+    		$(secondChild).css('background-position', '0px 0px');
+    	});
+    
+    	firstChild.addEventListener('click', function() {
+    		var imgX = '0';
+    		var animationInterval = setInterval(function(){
+    			if(imgX == '-18') imgX = '0';
+    			else imgX = '-18';
+    			$(secondChild).css('background-position', imgX+'px 0px');
+    		}, 500);
+    		if(navigator.geolocation) {
+    			navigator.geolocation.getCurrentPosition(function(position) {
+
+          	var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            updateFormAndMapToLocation(googleMap, searchMarker, latlng);
+            
+    				clearInterval(animationInterval);
+    				$(secondChild).css('background-position', '-144px 0px');
+    			});
+    		}
+    		else{
+    			clearInterval(animationInterval);
+    			$(secondChild).css('background-position', '0px 0px');
+    		}
+    	});
+    	
+    	controlDiv.index = 1;
+    	googleMap.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(controlDiv);
+    }
+        
+        
+    var initializeSearchMap = function(){
+      var requestPositionLater = false;
+      
+      var latitude = $('#google_map_div').data('latitude');
+      var longitude = $('#google_map_div').data('longitude');
+      if ( (latitude === '') || (longitude==='')) {
+        latitude = 0;
+        longitude = 0;
+        requestPositionLater = true;
+        
+      }
+
+      var googleMap;
+      var bounds;
+      var searchMarker;
+
+      console.log('initializing map......');
+
+      var myMapDiv = $("#google_map_div");
+      console.log(myMapDiv);
+      
+      var latLng = new google.maps.LatLng(latitude,longitude);
+
+      var mapOptions = {
+        center: latLng,
+        zoom: 12,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      googleMap = new google.maps.Map(myMapDiv[0],mapOptions);
+
+
+      var searchMarker = new google.maps.Marker({
+        position: latLng,
+        map: googleMap,
+        title: 'Hello World!',
+        animation:google.maps.Animation.DROP,
+        draggable: true
+      });
+      
+      google.maps.event.addListener(searchMarker, 'dragend', function(){
+          var latitude = searchMarker.getPosition().lat();
+          var longitude = searchMarker.getPosition().lng();
+          console.log(latitude);
+          console.log(longitude);
+          $('#latitude').val(latitude);
+          $('#longitude').val(longitude);
+          
+      });
+
+
+
+      addYourLocationButtonSimple(googleMap, searchMarker);
+
+
+      var domElementForSearchInput = $('#search_location_input');
+      var searchBox = new google.maps.places.SearchBox(domElementForSearchInput[0]);
+
+      searchBox.addListener('places_changed', function() {
+
+          console.debug('place changed');
+  
+          var places = searchBox.getPlaces();
+      
+          if (places.length == 0) {
+            return;
+          }
+      
+          var myPlace = places[0];
+          console.debug(myPlace.geometry.location);
+          
+        	var latlng = new google.maps.LatLng( myPlace.geometry.location.lat(), myPlace.geometry.location.lng());
+          // updateFormAndMapToLocation(googleMap, searchMarker, latlng);
+          // we could set the map here and wait for auser-submit, but we will push through right here. 
+          $('#latitude').val(latlng.lat());
+          $('#longitude').val(latlng.lng());
+          $('#search_form').submit();
+  
+      });
+      
+      if (requestPositionLater){
+    		if(navigator.geolocation) {
+    			navigator.geolocation.getCurrentPosition(function(position) {
+          	var latlng = new google.maps.LatLng( position.coords.latitude, position.coords.longitude);
+            updateFormAndMapToLocation(googleMap, searchMarker, latlng);          
+    			});
+    		}
+      }
+
+    };
+      
+      
+      
+    
+    var attachSearchFormToMe = function(form){
+        $('#search_form').serializeArray().forEach(function(data){
+          $(form).appendToActionUrl(data.name,  data.value);
+        });
+    };  
+
+
+    var confirmDeleteStation = function(target){
+    	if (confirm('Do you relly want to delete this station? This cannot be undone!')) {
+    		var form = $(target).closest('form')
+    		attachSearchFormToMe(form);
+    		form.submit();
+    	}
+    };
+
+    var confirmChangeOfPublishStatus = function(target){
+      
+      var frm = $(target).closest('form')
+
+      $.ajax({
+          type: frm.attr('method'),
+          url: frm.attr('action'),
+          data: frm.serialize(),
+          success: function (data) {
+            Materialize.toast('Publish-Status changed successfully', 4000);
+          }
+      });
+
+    };
+
+    var searchFormHasBeenSubmitted = function(){
+      $('#search_form  :input').attr('disabled',true);
+    };
+    
+    var submitSearchForm = function(){
+      $('#search_form').submit();
+      searchFormHasBeenSubmitted();
+    };
+
+    var clickHashTag = function(hashTag){
+      $('#searchText').val(hashTag);
+      submitSearchForm();
+    }
+        
+    </script>
+    
+{% endblock %}
+{% block content %}
+
+
+  <div class="row" style="margin-top:20px;">
+
+    <div class="col m4 s12">
+
+      <form id="search_form">
+        <input type="hidden" name="latitude" id="latitude" value="{{request.latitude}}">
+        <input type="hidden" name="longitude" id="longitude" value="{{request.longitude}}">
+
+
+        <div class="row">
+          <div class="col s12">
+              <div class="switch" style="margin">
+                Use Map: &nbsp;&nbsp;&nbsp;
+                <label>
+                  Off
+                  <input type="hidden" name="useMap" value="{{request.useMap}}" id="useMapInput">
+                  <input type="checkbox" onchange="setMapVisible(this.checked);" id="useMapToggle" value="yes" {% if request.useMap == 'yes' %}checked="checked"{% endif %}>
+                  <span class="lever"></span>
+                  On
+                </label>
+              </div>
+
+            <div id="map_slider" {% if request.useMap != 'yes' %} style="display:none;" {% endif %}>
+              <div id="google_map_div" class="card" style="height:300px;width:100%;" data-request-location-from-browser="{{requestLocationFromBrowser}}" data-latitude="{{request.latitude}}" data-longitude="{{request.longitude}}"> 
+              </div>
+              
+              <div style="margin-top:0px;box-sizing: border-box;">
+                <input id="search_location_input" placeholder="Search Location..." style="width:100%;height:40px;border:0px;border-radius:0px;" class="search_input form-control input-sm" type="text"/>
+              </div>
+
+              <div class="input-field">
+                <select name="maxDistance" onchange="submitSearchForm()">
+                  <option value="" {{ is_not_selected(request.maxDistance) }} >unlimitted distance</option>
+                  <option value="10" {{ is_selected(request.maxDistance,'10') }}>10 meters</option>
+                  <option value="50" {{ is_selected(request.maxDistance,'50') }}>50 meters</option>
+                  <option value="100" {{ is_selected(request.maxDistance,'100') }}>100 meters</option>
+                  <option value="200" {{ is_selected(request.maxDistance,'200') }}>200 meters</option>
+                  <option value="500" {{ is_selected(request.maxDistance,'500') }}>500 meters</option>
+                  <option value="1000" {{ is_selected(request.maxDistance,'1000') }}>1 km</option>
+                  <option value="10000" {{ is_selected(request.maxDistance,'10000') }}>10 km</option>
+                  <option value="50000" {{ is_selected(request.maxDistance,'50000') }}>50 km</option>
+                  <option value="100000" {{ is_selected(request.maxDistance,'100000') }}>100 km</option>
+                  <option value="500000" {{ is_selected(request.maxDistance,'500000') }}>500 km</option>
+                  <option value="1000000" {{ is_selected(request.maxDistance,'1000000') }}>1000 km</option>
+                  <option value="5000000" {{ is_selected(request.maxDistance,'5000000') }}>5000 km</option>
+                </select>
+                <label>Maximum Distance To Pin</label>
+              </div>
+            </div>
+          </div>
+
+        </div>  
+
+        
+
+        <div class="row">
+
+          <div class="input-field col s12">
+            <input name="fromDateString" type="text" class="datepicker fromDateString" data-default-date="{{request.fromDateString}}">
+            <label>From Date</label>
+          </div>
+          <div class="input-field col s12">
+            <input name="untilDateString" type="text" class="datepicker untilDateString" data-default-date="{{request.untilDateString}}">
+            <label>Until Date</label>
+          </div>
+
+          <div class="input-field col s12">
+            <input placeholder="enter searchtext" type="text" id="searchText" name="searchText" class="validate" value="{{request.searchText}}">
+            <label>Search</label>
+          </div>      
+
+          <div class="input-field col s12 center-align" style="margin-bottom:20px;">
+            <button class="btn waves-effect waves-light" type="submit" name="action">Search
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+
+
+          <div class="input-field col s12">
+            <select name="limit" onchange="submitSearchForm()">
+              <option value="" disabled {{ is_not_selected(request.limit) }}>choose number of results</option>
+              <option value="10" {{ is_selected(request.limit,'10') }} >10</option>
+              <option value="50" {{ is_selected(request.limit,'50') }} >50</option>
+              <option value="100" {{ is_selected(request.limit,'100') }}>100</option>
+              <option value="200" {{ is_selected(request.limit,'200') }}>200</option>
+            </select>
+            <label>Limit Results</label>
+          </div>      
+          
+          <div class="input-field col s12">
+            <select name="sorting" onchange="submitSearchForm()">
+              <option value="" disabled {{ is_not_selected(request.sorting) }} >choose sorting</option>
+              <optgroup label="Standard Sortings">
+                <option value="intoTheFuture" {{ is_selected(request.sorting,'intoTheFuture') }}>chronological</option>
+                <option value="intoThePast" {{ is_selected(request.sorting,'intoThePast') }}>reverse chronological</option>
+                <option id="distance_to_pin_option" value="distanceToPin" {{ is_selected(request.sorting,'distanceToPin') }} {% if request.useMap != 'yes' %} disabled {% endif %}>distance to pin</option>
+              </optgroup>
+              <optgroup label="Administrative Sortings">
+                <option value="lastModified" {{ is_selected(request.sorting,'lastModified') }}>last modified</option>
+                <option value="leastModified" {{ is_selected(request.sorting,'leastModified') }}>least modified</option>
+                <option value="lastCreated" {{ is_selected(request.sorting,'lastCreated') }}>last created</option>
+                <option value="leastCreated" {{ is_selected(request.sorting,'leastCreated') }}>least created</option>
+              </optgroup>
+            </select>
+            <label>Sorting</label>
+          </div>      
+        </div>
+
+
+
+        <ul class="collection with-header">
+          <li class="collection-header">Popular Hashtags</li>
+          {% for hashtag in hashtags %}
+            <a onclick="clickHashTag('{{hashtag.key}}')" href="#!" class="collection-item"><span class="badge">{{hashtag.doc_count}}</span>{{hashtag.key}}</a>
+          {% endfor %}        
+        </ul>
+
+
+      </form>
+      
+
+      
+    </div>
+ 
+ 
+
+
+    <div class="col m8 s12">
+      <div style="font-size:20px;">This is my disk-usage: {{myDiskUsage}} GB</div>
+      <div style="font-size:20px;">My costs last 30 days: {{myCostsLast30Days}} Euro</div>
+      
+      
+      
+      {% include 'paginator.html' %}
+
+       <div class="image-grid">
+         
+          {% for station in stations %}
+
+            <div class="deletable-target card">
+
+              <div class="card-image">
+                {% if station.attachmentType == 'image' %}
+                  <img class="materialboxed" 
+                  data-caption="{{station.title}} -- {{station.description}}" 
+                  src="/website/group/{{groupId}}/image/{{station.id}}/big/original">
+                {% endif %}
+                {% if station.attachmentType == 'video' %}
+                  <video class="responsive-video" controls poster="/website/group/{{groupId}}/video/{{station.id}}/jpg">
+                    <source src="/website/group/{{groupId}}/video/{{station.id}}/mp4" type="video/mp4">
+                    <source src="/website/group/{{groupId}}/video/{{station.id}}/ogg" type="video/ogg">
+                    <source src="/website/group/{{groupId}}/video/{{station.id}}/webm" type="video/webm">
+                  </video>  
+                {% endif %}
+                <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">edit</i></a>
+              </div>
+
+              <!--
+              <span class="card-title">Card Title</span>
+              -->
+              
+              <div class="card-content">
+                  <span class="card-title activator grey-text text-darken-4"><i class="material-icons right">more_vert</i></span>                
+                  <p style="font-style:italic;">{{station.localTime}}</p>
+                  <p>{{station.shortPlaceName}}</p>
+              </div>   
+          
+              <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i></span>
+                <p>Here is some more information about this product that is only revealed once clicked on.</p>
+              </div>              
+              
+              <div style="display:none;" class="">
+                <a href="/website/group/{{groupId}}/station-by-id/{{station.id}}">
+                  <i title="details" class="black-text small material-icons clickable" data-station-id="{{station.id}}">info</i>
+                </a>
+                {% if station.editPermission  %} 
+                  <a href="/website/group/{{groupId}}/station/upload-form/{{station.id}}">
+                    <i title="edit" class="black-text small material-icons clickable" data-station-id="{{station.id}}">edit</i>
+                  </a>
+                {% endif %}
+                {% if station.deletePermission  %} 
+                  <i title="delete" class="red-text small material-icons clickable deletable-trigger" data-station-id="{{station.id}}">delete</i>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}        
+
+       </div>
+
+
+      {% if stations|length > 0 %}
+        {% include 'paginator.html' %}
+      {% endif %}        
+        
+        
+    </div>
+    
+  </div>
+
+
+    <script>
+    
+    
+
+      $( document ).ready(function(){
+        $('.deletable-trigger').click(function(what){
+        	if (confirm('Do you relly want to delete this station? This cannot be undone!')) {
+            $.post('/api/station/delete', {
+              stationId: what.target.dataset.stationId
+            }, function(success){
+              if (success.status === 'deleted'){
+                $(what.target).closest('.deletable-target').remove();
+              }
+            });
+        	}
+        });
+      });
+
+    
+      $( document ).ready(function(){
+        
+        var latitude = $('#google_map_div').data('latitude');
+        var longitude = $('#google_map_div').data('longitude');
+
+        var requestLocationFromBrowser = $('#google_map_div').data('request-location-from-browser')
+        
+        if ( requestLocationFromBrowser == 'yes' ) {
+          
+        	if(navigator.geolocation) {
+        		navigator.geolocation.getCurrentPosition(function(position) {
+          		  var currentUrl = location.href;
+          		  var newUrl = currentUrl.split('#')[0];
+          		  var hasParameters = currentUrl.indexOf('?') !== -1;
+          		  
+          		  if (hasParameters){
+          		    newUrl += "&";
+          		  }
+          		  else {
+          		    newUrl += "?";
+          		  }
+          		  
+          		  newUrl += "latitude=" + position.coords.latitude + "&longitude=" + position.coords.longitude;
+          		  
+              	history.replaceState({}, "Forward to your location", newUrl);
+                setTimeout(function(){
+                  location.reload(true);
+                },0)         
+            });
+        	}
+          
+        }
+        else {
+          setTimeout(function(){
+            initializeSearchMap(latitude, longitude);
+          },0);          
+  
+  
+          $('select').formSelect();        
+                
+          $('.datepicker.fromDateString').datepicker({
+            defaultDate: new Date('{{request.fromDateString}}'),
+            setDefaultDate: true,
+            format: 'yyyy-mm-dd',
+            yearRange: 100
+          });
+
+          $('.datepicker.untilDateString').datepicker({
+            defaultDate: new Date('{{request.untilDateString}}'),
+            setDefaultDate: true,
+            format: 'yyyy-mm-dd',
+            yearRange: 100
+          });
+
+                  
+          $(document).ready(function(){
+            $('.materialboxed').materialbox();
+          });                       
+          
+          $(document).on('click', '.card .click-reveal', function() {
+            console.log('got one lcikc');
+          	var card = $(this).closest('.card');
+          	console.log(card);
+          	initializeStationMap(card);
+          });        
+        }
+        
+        
+      });
+  </script>
+
+{% endblock %}

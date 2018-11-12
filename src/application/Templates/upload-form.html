@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+
+{% block title %}Upload Station{% endblock %}
+
+
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+
+    <div class="col m6 s12">
+        <div class="card">
+          {% if station.attachmentType == 'image' %}
+          <div class="card-image waves-effect waves-block waves-light">
+            <img class="activator" src="/website/group/{{groupId}}/image/{{station.id}}/original/original">
+          </div>
+          {% endif %}
+  
+          {% if station.attachmentType == 'video' %}
+          <div class="card-image waves-effect waves-block waves-light">
+            <video class="responsive-video" controls poster="/website/group/{{groupId}}/video/{{station.id}}/jpg">
+              <source src="/website/group/{{groupId}}/video/{{station.id}}/mp4" type="video/mp4">
+              <source src="/website/group/{{groupId}}/video/{{station.id}}/ogg" type="video/ogg">
+              <source src="/website/group/{{groupId}}/video/{{station.id}}/webm" type="video/webm">
+            </video>  
+          </div>
+          {% endif %}
+
+        </div>
+    </div>
+
+    <div class="col m6 s12">
+      <form  action="/website/group/{{groupId}}/station/{{station.id}}/edit" method="post" enctype="multipart/form-data" style="margin-bottom:30px;">
+        <input type="hidden" name="latitude" id="latitude"/>
+        <input type="hidden" name="longitude" id="longitude"/>
+
+        <div class="row">
+          <div class="input-field col s12">
+            <input type="datetime-local" name="inputDateTimeString" id="timestamp" value="{{station.timestampString}}"/>
+          </div>      
+        </div>
+
+
+      
+        <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="enter the title of the station" name="title" type="text" class="validate" value="{{station.title}}">
+              <label>Title</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+              <textarea placeholder="describe the station" name="description" class="materialize-textarea">{{station.description}}</textarea>
+              <label>Description</label>
+            </div>
+        </div>
+            
+        <div class="row">
+            <div class="input-field col s12">
+              <button class="btn waves-effect waves-light right" type="submit" name="action">Submit
+                  <i class="material-icons right">send</i>
+              </button>
+            </div>
+        </div>
+        
+        
+      </form>
+    </div>
+
+  </div>    
+
+  <div class="row">
+    <div class="col s12">
+      <div id="map"  style="min-height:50vh;">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var lat = parseFloat("{{station.latitude}}");
+  var lng = parseFloat("{{station.longitude}}");
+</script>
+
+
+
+<script>
+    var map;
+    function initMap() {
+      var myLatLng = {lat: 0, lng: 0};
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: myLatLng,
+        zoom: 14
+      });
+
+      var geocoder = new google.maps.Geocoder;
+
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: 'Hello World!',
+        draggable: true
+      });
+      
+      google.maps.event.addListener(marker, 'dragend', function(){
+          adjustForm(marker.getPosition());
+      });
+
+      var adjustForm = function(latLng){
+          $('#latitude').val(latLng.lat());
+          $('#longitude').val(latLng.lng());
+      };
+
+      addYourLocationButton(map, marker,adjustForm);
+      
+  		var productLatlng = new google.maps.LatLng(lat, lng);
+  		map.setCenter(productLatlng);
+			marker.setPosition(productLatlng);
+			adjustForm(productLatlng);
+
+    };
+
+  //$('#product_description').val('New Text');
+  //$('#product_description').trigger('autoresize');    
+    
+</script>
+
+
+
+<script src="/static/javascript/maps.js"></script>
+
+<script>
+  initMap();
+  $('select').formSelect();        
+  
+</script>
+
+
+{% endblock %}
+

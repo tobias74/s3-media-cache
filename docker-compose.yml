@@ -1,0 +1,93 @@
+version: "3"
+services:
+
+  web:
+    image: nginx:latest
+    volumes:
+      - ./src:/src
+      - ./my_custom_nginx_settings.conf:/etc/nginx/conf.d/my_custom_nginx_settings.conf
+
+    expose:
+      - "80"
+
+    networks:
+      - appnet
+      - nginx-proxy
+
+
+  app:
+    restart: always
+    build: .
+    
+    volumes:
+      - ./php.ini:/usr/local/etc/php/conf.d/remembrance.ini
+    
+
+    networks:
+      - appnet
+
+    external_links:
+      - docker-redis:redis
+      - docker-elasticsearch:elasticsearch
+      - docker-rabbitmq:rabbitmq
+      - docker-mongo:mongodb
+      
+
+
+  media-transcoder:
+    restart: always
+    build: .
+    command: ["/src/application/CLI/Commands/listen-for-video-transcoding-jobs.php"]
+    
+    networks:
+      - appnet
+      - nginx-proxy
+
+    external_links:
+      - docker-redis:redis
+      - docker-elasticsearch:elasticsearch
+      - docker-rabbitmq:rabbitmq
+      - docker-mongo:mongodb
+
+
+  infrastructure-builder:
+    build: .
+    command: ["/src/application/CLI/Commands/infrastructure-and-index.php"]
+    
+    networks:
+      - appnet
+      - nginx-proxy
+
+    external_links:
+      - docker-redis:redis
+      - docker-elasticsearch:elasticsearch
+      - docker-rabbitmq:rabbitmq
+      - docker-mongo:mongodb
+    
+
+  abandonned-file-searcher:
+    build: .
+    command: ["/src/application/CLI/Commands/search-abandonned-files.php"]
+    
+    networks:
+      - appnet
+      - nginx-proxy
+
+    external_links:
+      - docker-redis:redis
+      - docker-elasticsearch:elasticsearch
+      - docker-rabbitmq:rabbitmq
+      - docker-mongo:mongodb
+  
+  
+networks:
+
+  nginx-proxy:
+    external: true
+
+  appnet:
+    external: true
+    
+    
+  
+  

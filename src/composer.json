@@ -1,0 +1,28 @@
+{
+    "require": {
+        "symfony/http-foundation": "*",
+        "speckvisit/speckvisit": "@dev",
+        "aws/aws-sdk-php": "*",
+        "videlalvaro/php-amqplib": "2.2.*",
+        "tobias74/php-resumable-upload": "@dev",
+        "tobias74/php-simple-acl": "@dev",
+        "tobias74/php-s3-service": "@dev",
+        "tobias74/php-media-cache": "@dev",
+        "tobias74/php-user-recognizer": "@dev",
+        "tobias74/php-exif-timeplace": "@dev",
+        "tobias74/php-namespaced-redis-client": "@dev",
+        "tobias74/php-small-front": "@dev",
+        "tobias74/php-application-front": "@dev",
+        "sugarloaf/sugarloaf":"@dev",
+        "anahkiasen/underscore-php": "~2.0.0",
+        "tobias74/tiro": "*",
+        "tobias74/reverse-geocoder-cache": "@dev",
+        "predis/predis": "*",
+        "phpexiftool/phpexiftool": "~0.4.1",
+        "auth0/auth0-php": "*",
+        "twig/twig": "~1.29.0",
+        "elasticsearch/elasticsearch": "~6.0",
+        "mongodb/mongodb": "^1.0.0",
+        "ralouphie/getallheaders": "*"
+    }
+}

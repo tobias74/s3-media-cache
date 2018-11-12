@@ -1,0 +1,12 @@
+
+      <div class="row">
+        <div class="col s12 m4 hide-on-small-only">
+          <a href="/website/group/{{groupId}}?{{currentQueryWithoutSearchAfter}}" class="waves-effect waves-light btn"><i class="material-icons left">settings_backup_restore</i>Back To Top</a>
+        </div>        
+        <div class="col s6 m4">
+          <a onclick="window.history.back();" href="#!" {% if isFirstPage %}disabled{% endif %} class="waves-effect waves-light btn"><i class="material-icons left">skip_previous</i>Prev Page</a>
+        </div>        
+        <div class="col s6 m4">
+          <a href="/website/group/{{groupId}}?{{currentQueryWithoutSearchAfter}}&searchAfter={{(stations|last).esSort|json_encode()}}" class="waves-effect waves-light btn"><i class="material-icons right">skip_next</i>Next Page</a>
+        </div>        
+      </div>
