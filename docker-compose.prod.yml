@@ -2,7 +2,7 @@ version: "3"
 services:
 
   web:
-    container_name: remebrance-live-nginx
+    container_name: remebrance-live-s3-media-nginx
 
     volumes:
         - ./site-prod.conf:/etc/nginx/conf.d/default.conf
@@ -14,7 +14,7 @@ services:
 
 
   app:
-    container_name: remebrance-app-prod
+    container_name: remebrance-app-s3-media-prod
   
     env_file: 
       - environment-prod.env
@@ -23,20 +23,20 @@ services:
   
   
   media-transcoder:
-    container_name: media-transcoder-live-remebrance
+    container_name: media-transcoder-live-media-remebrance
     env_file: 
       - environment-prod.env
 
 
 
   infrastructure-builder:
-    container_name: infrastructure-live-remebrance
+    container_name: infrastructure-live-media-remebrance
     env_file: 
       - environment-prod.env
 
 
   abandonned-file-searcher:
-    container_name: abandonned-file-searcher-live-remebrance
+    container_name: abandonned-file-searcher-media-live-remebrance
     env_file: 
       - environment-prod.env
 

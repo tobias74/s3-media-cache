@@ -50,20 +50,6 @@ services:
       - docker-mongo:mongodb
 
 
-  infrastructure-builder:
-    build: .
-    command: ["/src/application/CLI/Commands/infrastructure-and-index.php"]
-    
-    networks:
-      - appnet
-      - nginx-proxy
-
-    external_links:
-      - docker-redis:redis
-      - docker-elasticsearch:elasticsearch
-      - docker-rabbitmq:rabbitmq
-      - docker-mongo:mongodb
-    
 
   abandonned-file-searcher:
     build: .

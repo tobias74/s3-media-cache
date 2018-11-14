@@ -2,19 +2,18 @@ version: "3"
 services:
 
   web:
-    container_name: remebrance-dev-nginx
+    container_name: remebrance-dev-s3-media-nginx
 
     volumes:
         - ./site-dev.conf:/etc/nginx/conf.d/default.conf
 
     environment:
-      VIRTUAL_HOST: test.remembrance.link
-      LETSENCRYPT_HOST: test.remembrance.link
+      VIRTUAL_HOST: test-s3-media.remembrance.link
+      LETSENCRYPT_HOST: test-s3-media.remembrance.link
       LETSENCRYPT_EMAIL: tobias@gaszmann.de
 
-
   app:
-    container_name: remebrance-app-dev
+    container_name: remebrance-s3-media-app-dev
   
     volumes:
       - ./src:/src
@@ -26,26 +25,17 @@ services:
   
   
   media-transcoder:
-    container_name: media-transcoder-dev-remebrance
+    container_name: media-transcoder-dev-s3-remebrance
 
     env_file: 
       - environment-dev.env
     volumes:
       - ./src:/src
 
-
-
-  infrastructure-builder:
-    container_name: infrastructure-dev-remebrance
-
-    env_file: 
-      - environment-dev.env
-    volumes:
-      - ./src:/src
 
 
   abandonned-file-searcher:
-    container_name: abandonned-file-searcher-dev-remebrance
+    container_name: abandonned-file-searcher-dev-s3-remebrance
 
     env_file: 
       - environment-dev.env
