@@ -14,56 +14,21 @@ return function($dm,$config){
     );
 
 
-    $dm->registerService('ZeitfadenRedisService','\PhpNamespacedRedisClient\RedisService')
-      ->addManagedDependency('RedisClient', 'RedisClient')
-      ->addUnmanagedInstance('Namespace', $config['TOBIGA_APPLICATION_ID']);
-
-
-    $dm->registerService('RedisClient', '\Redis')
-       ->addCallback(function($instance) use($config) {
-         $instance->connect($config['TOBIGA_REDIS_HOST']);
-       });
-
-  
-  
-    $dm->registerService('NativeSessionStorage','\Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage')
-       ->appendUnmanagedParameter(array())
-       ->appendManagedParameter('RedisSessionHandler');
-
-    $dm->registerService('SymfonySession','\Symfony\Component\HttpFoundation\Session\Session')
-       ->appendManagedParameter('NativeSessionStorage');
-
-    $dm->registerService('RedisSessionHandler','\Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler')
-       ->appendManagedParameter('RedisClient');
-
-
-
-
-  
-  
 
     // video transcoder
     $dm->registerSingleton('ListenForVideosWorker','\Zeitfaden\CLI\ListenForVideosWorker')
       ->addManagedDependency('CachedMediaService', 'CachedMediaService');
 
-    //indexing
     $dm->registerService('CreateInfrastructureWorker','\Zeitfaden\CLI\CreateInfrastructureWorker')
       ->addManagedDependency('S3ServiceForOriginalFiles', 'S3ServiceForOriginalFiles')
-      ->addManagedDependency('S3ServiceForTranscodedFiles', 'S3ServiceForTranscodedFiles')
-      ->addManagedDependency('ElasticSearchService', 'ElasticSearchService');
-
-    $dm->registerService('IndexAllStationsWorker','\Zeitfaden\CLI\IndexAllStationsWorker')
-      ->addManagedDependency('ControllerFacade', 'ControllerFacade');
+      ->addManagedDependency('S3ServiceForTranscodedFiles', 'S3ServiceForTranscodedFiles');
 
     // Housekeeper
     $dm->registerService('AbandonnedFileSearchWorker','\Zeitfaden\CLI\AbandonnedFileSearchWorker')
       ->addManagedDependency('S3ServiceForOriginalFiles', 'S3ServiceForOriginalFiles')
       ->addManagedDependency('S3ServiceForTranscodedFiles', 'S3ServiceForTranscodedFiles')
-      ->addManagedDependency('StationRepository', 'StationRepository')
       ->addManagedDependency('MediaCacheService', 'CachedMediaService');
 
-
-    $dm->registerService('ResumableUploadProcessor','\PhpResumableUpload\ResumableUploadProcessor');
 
 
   	$dm->registerSingleton('SqlProfiler','\Tiro\Profiler');

@@ -9,7 +9,6 @@ class CreateInfrastructureWorker
   {
     $this->getS3ServiceForOriginalFiles()->createYourBucket();
     $this->getS3ServiceForTranscodedFiles()->createYourBucket();
-    $this->getElasticSearchService()->createIndex();
     exit(0);
   }
 

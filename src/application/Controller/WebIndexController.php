@@ -2,7 +2,7 @@
 namespace Zeitfaden\Controller;
 
 
-class WebIndexController extends AbstractZeitfadenController
+class WebIndexController extends \PhpApplicationFront\AbstractActionController
 {
 
   public function getTranscodedURI_Action()

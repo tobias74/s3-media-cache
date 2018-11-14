@@ -8,8 +8,7 @@ return function(){
     $application = new \PhpApplicationFront\SugarloafApplication(array(
       'dependencyConfigurationFolder' => dirname(__FILE__).'/DependencyConfiguration',
       'templateFolder' => dirname(__FILE__).'/Templates',
-      'routeConfigurationFolder' => dirname(__FILE__).'/RouteConfiguration',
-      'sessionInstanceName' => 'SymfonySession'
+      'routeConfigurationFolder' => dirname(__FILE__).'/RouteConfiguration'
     ));
     
     return $application;
