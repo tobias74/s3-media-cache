@@ -1,14 +1,5 @@
 [
    {  
-      "route":"/favicon.ico",
-      "controller":"WebIndexController",
-      "action":"faviconAction",
-      "methods":[  
-         "GET",
-         "POST"
-      ]
-   },
-   {  
       "route":"/api/getConvertedImage",
       "controller":"WebIndexController",
       "action":"getConvertedImage_Action",
@@ -23,47 +14,6 @@
       "methods":[  
          "GET"
       ]
-   },
-   {  
-      "route":"/",
-      "controller":"WebIndexController",
-      "action":"indexAction",
-      "methods":[  
-         "GET",
-         "POST"
-      ]
-   },
-   {  
-      "route":"website/about",
-      "controller":"WebIndexController",
-      "action":"aboutAction",
-      "methods":[  
-         "GET"
-      ]
-   },
-   {  
-      "route":"website/toc",
-      "controller":"WebIndexController",
-      "action":"tocAction",
-      "methods":[  
-         "GET"
-      ]
-   },
-   {  
-      "route":"website/gdpr",
-      "controller":"WebIndexController",
-      "action":"gdprAction",
-      "methods":[  
-         "GET"
-      ]
-   },
-   {  
-      "route":"website/imprint",
-      "controller":"WebIndexController",
-      "action":"imprintAction",
-      "methods":[  
-         "GET"
-      ]
    }
-    
+
 ]
