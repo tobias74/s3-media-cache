@@ -3,14 +3,8 @@
 return function($dm,$config){
     
 
-    $dm->registerService('MediaHelper','\PhpApplicationFront\MediaHelper')
-      ->addManagedDependency('FileService', 'S3ServiceForOriginalFiles')
-      ->addManagedDependency('MediaCacheService', 'CachedMediaService');
-
-
     $dm->registerService('WebIndexController','\Zeitfaden\Controller\WebIndexController')
       ->addManagedDependency('FileSendingStrategy', 'ReverseProxyWithNginx')
-      ->addManagedDependency('MediaHelper', 'MediaHelper')
       ->addManagedDependency('FileService', 'S3ServiceForOriginalFiles')
       ->addManagedDependency('MediaCacheService', 'CachedMediaService')
       ->addManagedDependency('Profiler', 'PhpProfiler')
