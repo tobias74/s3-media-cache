@@ -1,11 +1,8 @@
 version: "3"
 services:
 
-  web:
+  s3-media-web-server:
     image: nginx:latest
-    volumes:
-      - ./src:/src
-      - ./my_custom_nginx_settings.conf:/etc/nginx/conf.d/my_custom_nginx_settings.conf
 
     expose:
       - "80"
@@ -15,53 +12,43 @@ services:
       - nginx-proxy
 
 
-  app:
+  s3-media-transcoder:
     restart: always
     build: .
-    
-    volumes:
-      - ./php.ini:/usr/local/etc/php/conf.d/remembrance.ini
-    
 
     networks:
       - appnet
 
     external_links:
-      - docker-redis:redis
-      - docker-elasticsearch:elasticsearch
       - docker-rabbitmq:rabbitmq
       - docker-mongo:mongodb
       
 
 
-  media-transcoder:
+  s3-media-transcoder-worker:
     restart: always
     build: .
     command: ["/src/application/CLI/Commands/listen-for-video-transcoding-jobs.php"]
-    
+
     networks:
       - appnet
       - nginx-proxy
 
     external_links:
-      - docker-redis:redis
-      - docker-elasticsearch:elasticsearch
       - docker-rabbitmq:rabbitmq
       - docker-mongo:mongodb
 
 
 
-  abandonned-file-searcher:
+  s3-media-abandonned-file-searcher:
     build: .
     command: ["/src/application/CLI/Commands/search-abandonned-files.php"]
-    
+
     networks:
       - appnet
       - nginx-proxy
 
     external_links:
-      - docker-redis:redis
-      - docker-elasticsearch:elasticsearch
       - docker-rabbitmq:rabbitmq
       - docker-mongo:mongodb
   
