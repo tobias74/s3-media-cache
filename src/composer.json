@@ -21,7 +21,6 @@
         "phpexiftool/phpexiftool": "~0.4.1",
         "auth0/auth0-php": "*",
         "twig/twig": "~1.29.0",
-        "elasticsearch/elasticsearch": "~6.0",
         "mongodb/mongodb": "^1.0.0",
         "ralouphie/getallheaders": "*"
     }

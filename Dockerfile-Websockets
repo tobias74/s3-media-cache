@@ -1,9 +1,7 @@
-FROM php:7.3.6-fpm
-
-COPY src/ /src/
+FROM php:7.3.6-zts
 
 RUN apt-get update && apt-get install -y \
-        curl nano \
+        curl nano entr \
 		libfreetype6-dev \
 		libjpeg62-turbo-dev \
 		libmcrypt-dev software-properties-common libpcre3-dev perl-doc\
@@ -12,17 +10,36 @@ RUN apt-get update && apt-get install -y \
 		
 
 RUN   git config --global user.email "tobias@gaszmann.de" && git config --global user.name "Tobias Gassmann"
+
+
+
+RUN git clone https://github.com/krakjoe/pthreads.git
+WORKDIR pthreads
+RUN phpize
+RUN ./configure
+RUN make && make install
+
+
+WORKDIR ..
+
+COPY src/ /src/
+
 		
 RUN docker-php-ext-install -j$(nproc) iconv mbstring exif curl intl zip xml bcmath \
 	&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 	&& docker-php-ext-install -j$(nproc) gd
 	
 	
+	
+	
+
+RUN pear channel-update pear.php.net
+RUN pecl channel-update pecl.php.net
 
 RUN pecl install redis \
 	&& pecl install mongodb \
 	&& pecl install imagick \
-	&& docker-php-ext-enable redis mongodb imagick
+	&& docker-php-ext-enable redis mongodb imagick pthreads
 
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

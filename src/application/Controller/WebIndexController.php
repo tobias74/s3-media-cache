@@ -11,6 +11,15 @@ class WebIndexController extends \PhpApplicationFront\AbstractActionController
     die('good');
   }
 
+  public function deleteConvertedMedia_Action()
+  {
+    $fileNameInBucket = $_REQUEST['fileNameInBucket'];
+    $this->getMediaCacheService()->deleteCachedMedias($fileNameInBucket);
+    echo(json_encode(array(
+      "some" => "ok"
+    )));
+  }
+
   public function getConvertedImage_Action()
   {
     $fileNameInBucket = $_REQUEST['fileNameInBucket'];

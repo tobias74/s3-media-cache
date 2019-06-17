@@ -13,9 +13,9 @@ class AbandonnedFileSearchWorker
     {
       if (!$this->hasTranscodedMediaReference($item['Key']))
       {
-        echo "found trancoded item  ".$item['Key'];
-        echo " ... this file does not have an entry in the transcoded-media-database...";
-        echo "\n";
+        //echo "found trancoded item  ".$item['Key'];
+        //echo " ... this file does not have an entry in the transcoded-media-database...";
+        //echo "\n";
       }
     }
     exit(0);

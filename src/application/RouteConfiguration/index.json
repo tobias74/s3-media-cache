@@ -14,6 +14,14 @@
       "methods":[  
          "GET"
       ]
+   },
+   {  
+      "route":"/api/deleteConvertedMedia",
+      "controller":"WebIndexController",
+      "action":"deleteConvertedMedia_Action",
+      "methods":[  
+         "GET"
+      ]
    }
 
 ]
