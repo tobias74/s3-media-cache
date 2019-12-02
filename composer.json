@@ -12,7 +12,7 @@
         "aws/aws-sdk-php": "*",
         "videlalvaro/php-amqplib": "2.2.*",
         "tobias74/php-s3-service": "@dev",
-        "tobias74/php-media-cache": "@dev",
+        "tobias74/php-media-cache": "0.5",
         "tobias74/php-namespaced-redis-client": "@dev",
         "sugarloaf/sugarloaf":"@dev",
         "anahkiasen/underscore-php": "~2.0.0",
