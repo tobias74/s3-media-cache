@@ -18,6 +18,6 @@
         "anahkiasen/underscore-php": "~2.0.0",
         "tobias74/tiro": "*",
         "predis/predis": "*",
-        "mongodb/mongodb": "^1.0.0",
+        "mongodb/mongodb": "^1.0.0"
     }
 }
