@@ -85,7 +85,7 @@ class S3MediaServer
         return $flySpec;
     }
 
-    protected function configureDependencies()
+    protected function configureDependencies($config)
     {
         $dm = new \SugarLoaf\DependencyManager();
         $this->dependecyManager = $dm;
