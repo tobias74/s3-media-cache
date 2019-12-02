@@ -1,0 +1,23 @@
+{
+    "name": "tobias74/s3-media-cache",
+    "description": "simple media cache",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "S3MediaCache\\": "src/"
+        }
+    },
+    "require": {
+        "aws/aws-sdk-php": "*",
+        "videlalvaro/php-amqplib": "2.2.*",
+        "tobias74/php-s3-service": "@dev",
+        "tobias74/php-media-cache": "@dev",
+        "tobias74/php-namespaced-redis-client": "@dev",
+        "sugarloaf/sugarloaf":"~0.2.3",
+        "anahkiasen/underscore-php": "~2.0.0",
+        "tobias74/tiro": "*",
+        "predis/predis": "*",
+        "mongodb/mongodb": "^1.0.0",
+    }
+}
