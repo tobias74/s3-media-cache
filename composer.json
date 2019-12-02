@@ -14,7 +14,7 @@
         "tobias74/php-s3-service": "@dev",
         "tobias74/php-media-cache": "@dev",
         "tobias74/php-namespaced-redis-client": "@dev",
-        "sugarloaf/sugarloaf":"~0.2.3",
+        "sugarloaf/sugarloaf":"@dev",
         "anahkiasen/underscore-php": "~2.0.0",
         "tobias74/tiro": "*",
         "predis/predis": "*",
